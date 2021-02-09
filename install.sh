@@ -1,14 +1,21 @@
 #!/bin/sh
 
-sudo apt-get update
+username=$(whoami)
 
+cd ~
+sudo apt-get update
 
 # install git
 sudo apt-get install -y git
 
 # install vim
 sudo apt-get install -y vim-gtk3
-cp ./.vimrc ~/
+cp ./.vimrc ~
+if [ "$username" = "root" ];then
+    sed -i 's/\/home\/house/\/root/' ~/.vimrc
+else
+    sed -i 's/\/home\/house/\/home\/$username/' ~/.vimrc
+fi
 
 # install docker
 sudo apt-get install -y \
@@ -56,6 +63,15 @@ sudo apt-get install -y zsh
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 cp ./.zshrc ~/
+if [ "$username" = "root" ];then
+    sed -i 's/\/home\/house/\/root/' ~/.zshrc
+else
+    sed -i 's/\/home\/house/\/home\/$username/' ~/.zshrc
+fi
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+echo "source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+
+
 
 # install build essential
 sudo apt-get install -y \
