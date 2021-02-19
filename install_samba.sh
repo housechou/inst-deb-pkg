@@ -1,7 +1,7 @@
 #!/bin/bash
- 
+
 # install samba server
-SAMBA_USERS="samba_test"
+SAMBA_USERS="samba_user"
 SAMBA_DIR=/srv/samba
 SAMBA_PASS="lovingsamba"
 
@@ -9,8 +9,12 @@ sudo apt-get install -y samba
 sudo mkdir -p $SAMBA_DIR
 sudo chgrp sambashare $SAMBA_DIR
 for u in $SAMBA_USERS;do
-    sudo useradd -M -d $SAMBA_DIR/$u -s /usr/sbin/nologin -G sambashare $u
-    sudo mkdir $SAMBA_DIR/$u
+    if id "$u" &>/dev/null; then
+        sudo usermod -a -G sambashare $u
+    else
+        sudo useradd -M -d $SAMBA_DIR/$u -s /usr/sbin/nologin -G sambashare $u
+    fi
+    sudo mkdir -p $SAMBA_DIR/$u
     sudo chgrp sambashare $SAMBA_DIR/$u
     sudo chmod 770 $SAMBA_DIR/$u
     echo -ne "$SAMBA_PASS\n$SAMBA_PASS\n" | sudo smbpasswd -a -s $u
@@ -25,4 +29,3 @@ for u in $SAMBA_USERS;do
 done
 sudo systemctl restart smbd
 sudo systemctl restart nmbd
-                                     
