@@ -1,9 +1,13 @@
 #!/bin/bash
 
 # install samba server
-SAMBA_USERS="samba_user"
-SAMBA_DIR=/srv/samba
-SAMBA_PASS="lovingsamba"
+#SAMBA_USERS="samba_user"
+#SAMBA_DIR=/srv/samba
+#SAMBA_PASS="lovingsamba"
+
+read -p "New samba username:" SAMBA_USER
+read -s -p "New user password:" SAMBA_PASS
+read -p "samba root directory:" SAMBA_DIR
 
 sudo apt-get install -y samba
 sudo mkdir -p $SAMBA_DIR

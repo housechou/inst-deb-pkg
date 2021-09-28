@@ -180,7 +180,8 @@ options=(1 "vim" on
          8 "fd" off
          9 "fcitx" off
          10 "shutter" off
-         11 "tmux" on)
+         11 "tmux" off
+         12 "samba" on)
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 for choice in $choices
@@ -229,6 +230,10 @@ do
         11)
             echo -e "\e[1mInstalling tmux"
             install_tmux
+            ;;
+        12)
+            echo -e "\e[1mInstalling samba"
+            ./install_samba.sh
             ;;
     esac
 done
