@@ -149,17 +149,37 @@ function install_shutter () {
     sudo apt-get update && sudo apt-get install -y shutter
 }
 
+function install_tmux_powerline () {
+    sudo apt-get install -y fonts-powerline
+    git clone https://github.com/housechou/tmux-powerline.git ~/.tmux/plugins/tmux-powerline
+    cp .tmux-powerlinerc ~/
+}
+# install tmux
+function install_tmux () {
+    sudo apt-get install -y tmux
+    sudo apt-get install -y cmake #for building tmux-mem-cpu-load
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    cp .tmux.conf ~/
+    tmux start-server
+    tmux new-session -d
+    ~/.tmux/plugins/tpm/bin/install_plugins
+    tmux kill-server
+    install_tmux_powerline
+}
+
 cmd=(dialog --separate-output --checklist "Select packages you want to install:" 22 76 16)
-options=(1 "vim" off    # any option can be set to default to "on"
+# any option can be set to default to "on"
+options=(1 "vim" on
          2 "tftp server" off
-         3 "ssh server" off
-         4 "build essential" off
+         3 "ssh server" on
+         4 "build essential" on
          5 "docker" off
          6 "oh-my-zsh" off
          7 "rg" off
          8 "fd" off
          9 "fcitx" off
-         10 "shutter" off)
+         10 "shutter" off
+         11 "tmux" on)
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 for choice in $choices
@@ -204,6 +224,10 @@ do
         10)
             echo -e "\e[1mInstalling shutter"
             install_shutter
+            ;;
+        11)
+            echo -e "\e[1mInstalling tmux"
+            install_tmux
             ;;
     esac
 done
