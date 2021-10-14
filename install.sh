@@ -63,14 +63,11 @@ function install_fcitx () {
 function install_oh-my-zsh () {
     sudo apt-get install -y zsh
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    if [ ! -f ~/.zshrc ];then
-        cp ./.zshrc ~/
-        if [ "$username" = "root" ];then
-            sed -i 's/\/home\/house/\/root/' ~/.zshrc
-        else
-            sed -i 's/\/home\/house/\/home\/$username/' ~/.zshrc
-        fi
+    if [ -f ~/.zshrc ];then
+        echo "Warning: backup ~/.zshrc to ~/.zshrc.bak "
+        cp ~/.zshrc ~/.zshrc.bak
     fi
+    cp ./.zshrc ~/
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     echo "source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
