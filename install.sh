@@ -8,8 +8,8 @@ sudo apt-get install -y dialog
 
 function install_vim () {
     sudo apt-get install -y vim-gtk3
-    curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh > neobundle.install.sh
-    sh ./neobundle.install.sh
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     if [ ! -f ~/.vimrc ];then
         cp ./.vimrc ~
         if [ "$username" = "root" ];then

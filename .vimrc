@@ -1,129 +1,74 @@
-
-"NeoBundle Scripts-----------------------------
-if &compatible
-  set nocompatible               " Be iMproved
-endif
-
-" Required:
-set runtimepath+=/home/house/.vim/bundle/neobundle.vim/
-
-" Required:
-call neobundle#begin(expand('/home/house/.vim/bundle'))
-
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
 
 " Add or remove your Bundles here:
-NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'ctrlpvim/ctrlp.vim'
-NeoBundle 'flazz/vim-colorschemes'
-NeoBundle 'tpope/vim-sleuth'
-NeoBundle 'vim-airline/vim-airline'
-NeoBundle 'majutsushi/tagbar'
-"NeoBundle 'Shougo/unite.vim'
-"NeoBundle 'Shougo/unite-outline'
+
+"Plug 'neoclide/coc.nvim', 'release'
+"Plug 'Shougo/neosnippet.vim'
+"Plug 'Shougo/neosnippet-snippets'
+Plug 'tpope/vim-fugitive'
+Plug 'flazz/vim-colorschemes'
+Plug 'NLKNguyen/papercolor-theme'
+"auto indent based on current file
+Plug 'tpope/vim-sleuth'
+Plug 'vim-airline/vim-airline'
+Plug 'majutsushi/tagbar'
 " You can specify revision/branch/tag.
-NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
-NeoBundle 'MarcWeber/vim-addon-mw-utils'
-NeoBundle 'tomtom/tlib_vim'
-NeoBundle 'garbas/vim-snipmate'
-NeoBundle 'honza/vim-snippets'
-NeoBundle 'bogado/file-line'
-"NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'junegunn/fzf.vim'
-"NeoBundle 'ntpeters/vim-better-whitespace'
-NeoBundle 'scrooloose/nerdtree'
+Plug 'Shougo/vimshell', { 'rev' : '3787e5' }
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'honza/vim-snippets'
+Plug 'bogado/file-line'
+"Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'scrooloose/nerdtree'
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+Plug 'mhinz/vim-grepper'
+Plug 'will133/vim-dirdiff'
+Plug 'Yggdroot/indentLine'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
+Plug 'google/vim-glaive'
+Plug 'junegunn/vim-easy-align'
 
-" You can specify revision/branch/tag.
-NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
+" Initialize plugin system
+call plug#end()
+call glaive#Install()
 
-" Required:
-call neobundle#end()
+Glaive codefmt plugin[mappings]
 
-" Required:
-filetype plugin indent on
-
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
-"End NeoBundle Scripts-------------------------
 
 
 set backspace=indent,eol,start
-set rtp+=~/.fzf
+"Set leader to <Space>
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
+
 "# Plugins setting
-" This is the default extra key bindings
-"let g:fzf_action = {
-"  \ 'ctrl-t': 'tab split',
-"  \ 'ctrl-x': 'split',
-"  \ 'ctrl-v': 'vsplit' }
+"## vim-codefmt
+nnoremap <leader>fc :FormatCode<CR>
+nnoremap <leader>fl :FormatLines<CR>
+"# vim-easy-align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+"
+" " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+nnoremap de d$
+"## leaderf
+let g:Lf_ShortcutF = '<C-P>'
+let g:Lf_ShowDevIcons = 0
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_CommandMap = {'<C-K>': ['<Up>'], '<C-J>': ['<Down>']}
+" search word under cursor, the pattern is treated as regex, then use CTRL+T to open new tab
+noremap <C-F> :<C-U><C-R>=printf("Leaderf rg -e %s ", expand("<cword>"))<CR>
+noremap <leader>rr :<C-U>Leaderf! rg --recall<CR>
+noremap <leader>fr :<C-U>Leaderf! file --recall<CR>
 
-" An action can be a reference to a function that processes selected lines
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
 
-function! s:build_location_list(lines)
-  call setloclist(0, map(copy(a:lines), '{ "filename": v:val }'))
-  lopen
-  lc
-endfunction
-
-let g:fzf_action = {
-  \ 'ctrl-l': function('s:build_location_list'),
-  \ 'ctrl-q': function('s:build_quickfix_list'),
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
-
-" Default fzf layout
-" - down / up / left / right
-"let g:fzf_layout = { 'down': '~40%' }
-
-" You can set up fzf window using a Vim command (Neovim or latest Vim 8 required)
-"let g:fzf_layout = { 'window': 'enew' }
-let g:fzf_layout = { 'window': '-tabnew' }
-"let g:fzf_layout = { 'window': '10split enew' }
-
-" Customize fzf colors to match your color scheme
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-
-" Enable per-command history.
-" CTRL-N and CTRL-P will be automatically bound to next-history and
-" previous-history instead of down and up. If you don't like the change,
-" explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-let g:rg_command = '
-  \ rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always"
-  \ -g "*.{js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}"
-  \ -g "!{.git,node_modules,vendor}/*" '
-nmap <C-p> :Files<CR>
-command! -bang -nargs=* Rg
-      \ call fzf#vim#grep(
-      \   'rg --column --line-number --no-heading --color=always --ignore-case '.shellescape(<q-args>), 1,
-      \   <bang>0 ? fzf#vim#with_preview('up:60%')
-      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-      \   <bang>0)
-
-nnoremap <C-p>a :Rg 
 "## air-line
 set laststatus=2
 "let g:airline#extensions#tabline#enabled = 1
@@ -132,6 +77,8 @@ let g:airline_theme='dark'
 
 "## Tagbar
 nmap <F2> :TagbarToggle<CR>
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -142,17 +89,25 @@ set autoread
 set nu
 set hlsearch
 set mouse=a
-set noexpandtab
-set shiftwidth=4
-set tabstop=4
-
-"Set leader to <Space>
-let mapleader = "\<Space>"
-let g:mapleader = "\<Space>"
+set autoindent
+set smartindent
+set cindent
+set smarttab
+set showmatch
+set report=0
+set modeline
+set nofoldenable
 
 "Edit vimrc quickly and apply immediately
 nmap <leader>e :e ~/.vimrc<CR>
 autocmd! bufwritepost .vimrc source ~/.vimrc
+
+"Select all
+"map <C-A> ggVG
+
+"Suuround word in quotes
+nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -170,10 +125,7 @@ set wildignore=*.o,*~,*.pyc
 set hidden
 
 " Ignore case when searching
-set ignorecase
-
-" When searching try to be smart about cases 
-set smartcase
+" set ignorecase
 
 " Highlight search results
 set hlsearch
@@ -185,13 +137,18 @@ set nowb
 set noswapfile
 
 "Toggles paste mode
-"nnoremap <F12> :set invpaste paste?<CR>i
-"set pastetoggle=<F12>
+nnoremap <F12> :set invpaste paste?<CR>i
+set pastetoggle=<F12>
 set showmode
+
+" clipbaord selection
 set clipboard=unnamedplus
+" primary selection
+"set clipboard=unnamed
+"
 "Toggles indent line
 set list listchars=tab:\|-,trail:.,extends:>
-set nolist
+set list
 nmap <leader>i :set list!<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -199,14 +156,35 @@ nmap <leader>i :set list!<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
-colorscheme wombat256
 set t_Co=256
-hi Normal guibg=NONE ctermbg=NONE
-if has('gui_running')
-set guifont=Monospace\ 14
-colorscheme desert256
-set lines=999 columns=999
-endif
+
+set background=dark
+colorscheme PaperColor
+let g:PaperColor_Theme_Options = {
+  \   'theme': {
+  \     'default.dark': {
+  \       'transparent_background': 1
+  \     }
+  \   },
+  \   'language': {
+  \     'python': {
+  \       'highlight_builtins' : 1
+  \     },
+  \     'cpp': {
+  \       'highlight_standard_library': 1
+  \     },
+  \     'c': {
+  \       'highlight_builtins' : 1
+  \     }
+  \   }
+  \ }
+"colorscheme wombat256
+"hi Normal guibg=NONE ctermbg=NONE
+"if has('gui_running')
+"  set guifont=Hack\ 14
+"  colorscheme PaperColor
+"  set lines=999 columns=999
+"endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
@@ -249,13 +227,22 @@ autocmd BufReadPost *
 set viminfo^=%
 
 au BufNewFile,BufRead *.icli setlocal ft=c
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
+au BufNewFile,BufRead *.py set expandtab
+
+"au BufNewFile,BufRead *.c set tabstop=8
+"au BufNewFile,BufRead *.c set softtabstop=8
+"au BufNewFile,BufRead *.c set shiftwidth=8
+"au BufNewFile,BufRead *.c set noexpandtab
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Grep searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "map  <F5> :execute "lgrep! -srnw --binary-files=without-match --exclude-dir=.git --exclude-dir=.svn . -e " . expand("<cword>") . " "<bar>lw<CR><CR>
 if executable("rg")
-    set grepprg=rg\ --vimgrep
-    set grepformat=%f:%l:%m
+  set grepprg=rg\ --vimgrep
+  set grepformat=%f:%l:%m
 endif
 nnoremap  <leader>g :lgrep! "\b<C-R><C-W>\b"<CR>:lw<CR>
 
@@ -266,6 +253,7 @@ augroup LoctionlistToggle
   autocmd BufWinLeave quickfix let g:llist_opened = 0
 augroup END
 set switchbuf+=usetab,newtab "new tab for quickfix
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
