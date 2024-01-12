@@ -167,6 +167,7 @@ function install_tmux () {
     ~/.tmux/plugins/tpm/bin/install_plugins
     tmux kill-server
     install_tmux_powerline
+    systemctl --user status tmux.service
 }
 
 cmd=(dialog --separate-output --checklist "Select packages you want to install:" 22 76 16)
