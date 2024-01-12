@@ -25,16 +25,19 @@ function install_docker () {
             apt-transport-https \
             ca-certificates \
             curl \
+            gnupg \
             gnupg-agent \
             software-properties-common
-
-    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-    sudo add-apt-repository --yes \
-        "deb [arch=amd64] https://download.docker.com/linux/debian \
-        $(lsb_release -cs) \
-        stable"
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt-get update
-    sudo apt-get install docker-ce docker-ce-cli containerd.io
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 }
 
 function install_tftp_server () {
@@ -134,19 +137,18 @@ function install_build_essential () {
 
 # install ripgrep
 function install_rg () {
-    curl -LO https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
-    sudo dpkg -i ripgrep_11.0.2_amd64.deb
+    sudo apt-get install -y ripgrep
 }
 
 # install fd
 function install_fd () {
     sudo apt-get install -y fd-find
+    ln -s $(which fdfind) ~/.local/bin/fd
 }
 
-# install shutter
-function install_shutter () {
-    sudo add-apt-repository --yes ppa:shutter/ppa
-    sudo apt-get update && sudo apt-get install -y shutter
+# install okular
+function install_okular () {
+    sudo apt-get install -y okular
 }
 
 function install_tmux_powerline () {
@@ -169,18 +171,17 @@ function install_tmux () {
 
 cmd=(dialog --separate-output --checklist "Select packages you want to install:" 22 76 16)
 # any option can be set to default to "on"
-options=(1 "vim" on
+options=(1 "vim" off
          2 "tftp server" off
-         3 "ssh server" on
-         4 "build essential" on
+         3 "ssh server" off
+         4 "build essential" off
          5 "docker" off
          6 "oh-my-zsh" off
          7 "rg" off
          8 "fd" off
-         9 "fcitx" off
-         10 "shutter" off
-         11 "tmux" off
-         12 "samba" on)
+         9 "okular" off
+         10 "tmux" off
+         11 "samba" off)
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 for choice in $choices
@@ -211,26 +212,22 @@ do
             install_oh-my-zsh
             ;;
         7)
-            echo -e "\e[1mInstalling rg"
+            echo -e "\e[1mInstalling rg (line search tool instead of grep) "
             install_rg
             ;;
         8)
-            echo -e "\e[1mInstalling fd"
+            echo -e "\e[1mInstalling fd (alternative find cmd)"
             install_fd
             ;;
         9)
-            echo -e "\e[1mInstalling fcitx"
-            install_fcitx
+            echo -e "\e[1mInstalling okular (pdf viewer)"
+            install_okular
             ;;
         10)
-            echo -e "\e[1mInstalling shutter"
-            install_shutter
-            ;;
-        11)
             echo -e "\e[1mInstalling tmux"
             install_tmux
             ;;
-        12)
+        11)
             echo -e "\e[1mInstalling samba"
             ./install_samba.sh
             ;;
